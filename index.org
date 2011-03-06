@@ -7,7 +7,7 @@
 #+STYLE: <link rel="stylesheet" type="text/css" href="org-mode-document.css" />
 
 * はじめに
-mercurialのチートシートがgithubに上がっていることに疑問を覚えないこと。
+mercurialのチートシートが[[https://github.com/troter/troter.github.com/tree/master/mercurial-cheatsheet][github]]に上がっていることに疑問を覚えないこと。
 
 * Mercurialとは
 TODO:
@@ -30,9 +30,9 @@ username=Takumi IINO <takumi@timedia.co.jp>
 #+BEGIN_SRC sh
 % hg help
 #+END_SRC
-** サブコマンドのhelp(hg help [SUB_COMMAND])
+** サブコマンドのhelp(hg help [COMMAND])
 #+BEGIN_SRC sh
-% hg help [SUB_COMMAND]
+% hg help [コマンド]
 #+END_SRC
 #+BEGIN_SRC sh
 % hg help help           # helpのhelpを表示
@@ -65,7 +65,6 @@ $
 #+END_SRC
 
 * 確認を行うコマンド
-
 ** コミットログを確認する(hg log)
 #+BEGIN_SRC sh
 % hg log       # 全てのログを表示
@@ -279,13 +278,171 @@ no rollback information available
 % hg log --template "{rev}:{node}: {desc}\n"
 1:f491ca2a61140034ed906d7d45893838493246c8: camelize
 0:c0d1b673238bd257f79a7c2779f1e0d8e24d3524: add hello.rb
+%
 % hg commit -m "add perl sample"
+% hg log --template "{rev}:{node}: {desc}\n"
+2:c0266fae871b5783d4f4a50faf0694d41df01418: add perl sample
+1:f491ca2a61140034ed906d7d45893838493246c8: camelize
+0:c0d1b673238bd257f79a7c2779f1e0d8e24d3524: add hello.rb
+%
 #+END_SRC
 
 * multiple headsに関わる操作
-** multiple headsを作る
-** multiple headsの確認
-** multiple headsの統合
+multiple headsとは名前無しブランチが複数ある状態の事である。
+** multiple headsを作る(hg update [REV] & hg commit)
+#+BEGIN_SRC sh
+% hg log --template "{rev}:{node}: {desc}\n"
+2:c0266fae871b5783d4f4a50faf0694d41df01418: add perl sample
+1:f491ca2a61140034ed906d7d45893838493246c8: camelize
+0:c0d1b673238bd257f79a7c2779f1e0d8e24d3524: add hello.rb
+%
+% # 一つ前に戻る
+% hg update 1
+0 files updated, 0 files merged, 1 files removed, 0 files unresolved
+% hg parents --template "{rev}:{node}\n"
+1:f491ca2a61140034ed906d7d45893838493246c8
+%
+% # 二つ目のheadsを作る
+% echo 'print "Hello, Mercurial."' > hello.py
+% hg add hello.py
+% hg commit -m "add python sample"
+created new head
+%
+#+END_SRC
+** multiple headsの確認(hg heads)
+#+BEGIN_SRC sh
+% hg heads
+changeset:   3:980f8866917a
+tag:         tip
+parent:      1:f491ca2a6114
+user:        Takumi IINO <takumi@timedia.co.jp>
+date:        Mon Mar 07 00:10:18 2011 +0900
+summary:     add python sample
+
+changeset:   2:46f0166b17d8
+user:        Takumi IINO <takumi@timedia.co.jp>
+date:        Sun Mar 06 22:53:57 2011 +0900
+summary:     add perl sample
+
+%
+#+END_SRC
+** 2つのmultiple headsの統合(hg merge)
+#+BEGIN_SRC sh
+% hg merge
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+% hg status
+M hello.pl
+%
+% # この状態でparentsを確認すると二つあることがわかる。
+% hg parents --template "{rev}:{node}\n"
+3:980f8866917a1098d08f1e1b85dc396fecbc83ad
+2:46f0166b17d886637c30e6f486b23043be56b22e
+%
+% hg commit -m "merge changeset: 2:46f0166b17d8"
+% hg heads
+changeset:   4:4b83e608a7d0
+tag:         tip
+parent:      3:980f8866917a
+parent:      2:46f0166b17d8
+user:        Takumi IINO <takumi@timedia.co.jp>
+date:        Mon Mar 07 00:17:50 2011 +0900
+summary:     merge changeset: 2:46f0166b17d8
+
+% ls
+hello.pl  hello.py  hello.rb
+%
+#+END_SRC
+** 3つのmultiple headsの統合(hg merge -r [REV])
+*** 3つheadの作成
+#+BEGIN_SRC sh
+% # 二つ目のheadを作る
+% hg update 3
+0 files updated, 0 files merged, 1 files removed, 0 files unresolved
+% echo '(display "Hello, Mercurial.")(newline)' > hello.scm
+% hg add hello.scm
+% hg commit -m "add scheme sample"
+created new head
+%
+% # 三つ目のheadを作る
+% hg update 3
+0 files updated, 0 files merged, 1 files removed, 0 files unresolved
+% echo '(princ (format nil "Hello, Mercurial.~%"))' > hello.cl
+% hg add hello.cl
+% hg commit -m "add common lisp sample"
+created new head
+%
+% hg heads
+changeset:   6:6a0eac3064c9
+tag:         tip
+parent:      3:980f8866917a
+user:        Takumi IINO <takumi@timedia.co.jp>
+date:        Mon Mar 07 00:34:33 2011 +0900
+summary:     add common lisp sample
+
+changeset:   5:bcb5dec879f9
+parent:      3:980f8866917a
+user:        Takumi IINO <takumi@timedia.co.jp>
+date:        Mon Mar 07 00:22:44 2011 +0900
+summary:     add scheme sample
+
+changeset:   4:4b83e608a7d0
+parent:      3:980f8866917a
+parent:      2:46f0166b17d8
+user:        Takumi IINO <takumi@timedia.co.jp>
+date:        Mon Mar 07 00:17:50 2011 +0900
+summary:     merge changeset: 2:46f0166b17d8
+
+%
+#+END_SRC
+
+*** 統合
+単純なmergeは失敗する
+#+BEGIN_SRC sh
+% hg merge
+abort: branch 'default' has 3 heads - please merge with an explicit rev
+(run 'hg heads .' to see heads)
+#+END_SRC
+リビジョンを指定してmergeを行う
+#+BEGIN_SRC sh
+% hg parents --template "{rev}:{node}\n"
+6:6a0eac3064c9543384538a5f3ce8e28ad21f5db1
+%
+% # 一つ目のmerge
+% hg merge -r 4
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+%
+% # いっぺんに複数のマージは行えない
+% hg merge -r 5
+abort: outstanding uncommitted merges
+%
+% # 一つ目をコミット
+% hg commit -m "Merged changes"
+%
+% # 二つ目のmergeとコミット
+% hg merge -r 5
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+% hg commit -m "Merged changes"
+%
+% # headの統合が完了
+% hg heads
+changeset:   8:48d139b4230f
+tag:         tip
+parent:      7:89f3c6e6d974
+parent:      5:bcb5dec879f9
+user:        Takumi IINO <takumi@timedia.co.jp>
+date:        Mon Mar 07 00:47:37 2011 +0900
+summary:     Merged changes
+
+%
+#+END_SRC
+
+** 衝突の解決(hg resolve)
+*** 衝突するシュチュエーション
+*** 衝突の発生
+*** 衝突の解決
 * ブランチの操作
 ** ブランチの作成
 ** 別のブランチの変更の取り込み

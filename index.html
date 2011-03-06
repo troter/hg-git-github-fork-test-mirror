@@ -7,7 +7,7 @@ lang="ja" xml:lang="ja">
 <title>Mercurial チートシート</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2011-03-06 23:06:06 "/>
+<meta name="generated" content="2011-03-07 00:54:01 "/>
 <meta name="author" content="Takumi IINO (troter)"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -90,7 +90,7 @@ lang="ja" xml:lang="ja">
 <li><a href="#sec-4">4 help </a>
 <ul>
 <li><a href="#sec-4.1">4.1 help(hg help) </a></li>
-<li><a href="#sec-4.2">4.2 サブコマンドのhelp(hg help [SUB_COMMAND]) </a></li>
+<li><a href="#sec-4.2">4.2 サブコマンドのhelp(hg help [COMMAND]) </a></li>
 <li><a href="#sec-4.3">4.3 グローバルオプションを表示 </a></li>
 </ul>
 </li>
@@ -129,9 +129,11 @@ lang="ja" xml:lang="ja">
 </li>
 <li><a href="#sec-9">9 multiple headsに関わる操作 </a>
 <ul>
-<li><a href="#sec-9.1">9.1 multiple headsを作る </a></li>
-<li><a href="#sec-9.2">9.2 multiple headsの確認 </a></li>
-<li><a href="#sec-9.3">9.3 multiple headsの統合 </a></li>
+<li><a href="#sec-9.1">9.1 multiple headsを作る(hg update [REV] &amp; hg commit) </a></li>
+<li><a href="#sec-9.2">9.2 multiple headsの確認(hg heads) </a></li>
+<li><a href="#sec-9.3">9.3 2つのmultiple headsの統合(hg merge) </a></li>
+<li><a href="#sec-9.4">9.4 3つのmultiple headsの統合(hg merge -r [REV]) </a></li>
+<li><a href="#sec-9.5">9.5 衝突の解決(hg resolve) </a></li>
 </ul>
 </li>
 <li><a href="#sec-10">10 ブランチの操作 </a>
@@ -153,7 +155,7 @@ lang="ja" xml:lang="ja">
 <h2 id="sec-1"><span class="section-number-2">1</span> はじめに </h2>
 <div class="outline-text-2" id="text-1">
 
-<p>mercurialのチートシートがgithubに上がっていることに疑問を覚えないこと。
+<p>mercurialのチートシートが<a href="https://github.com/troter/troter.github.com/tree/master/mercurial-cheatsheet">github</a>に上がっていることに疑問を覚えないこと。
 </p>
 </div>
 
@@ -241,13 +243,13 @@ username=Takumi IINO &lt;takumi@timedia.co.jp&gt;
 </div>
 
 <div id="outline-container-4.2" class="outline-3">
-<h3 id="sec-4.2"><span class="section-number-3">4.2</span> サブコマンドのhelp(hg help [SUB_COMMAND]) </h3>
+<h3 id="sec-4.2"><span class="section-number-3">4.2</span> サブコマンドのhelp(hg help [COMMAND]) </h3>
 <div class="outline-text-3" id="text-4.2">
 
 
 
 
-<pre class="example">% hg help [SUB_COMMAND]
+<pre class="example">% hg help [コマンド]
 </pre>
 
 
@@ -336,7 +338,6 @@ $
 <div id="outline-container-6" class="outline-2">
 <h2 id="sec-6"><span class="section-number-2">6</span> 確認を行うコマンド </h2>
 <div class="outline-text-2" id="text-6">
-
 
 
 </div>
@@ -761,7 +762,13 @@ no rollback information available
 % hg log --template "{rev}:{node}: {desc}\n"
 1:f491ca2a61140034ed906d7d45893838493246c8: camelize
 0:c0d1b673238bd257f79a7c2779f1e0d8e24d3524: add hello.rb
+%
 % hg commit -m "add perl sample"
+% hg log --template "{rev}:{node}: {desc}\n"
+2:c0266fae871b5783d4f4a50faf0694d41df01418: add perl sample
+1:f491ca2a61140034ed906d7d45893838493246c8: camelize
+0:c0d1b673238bd257f79a7c2779f1e0d8e24d3524: add hello.rb
+%
 </pre>
 
 
@@ -776,29 +783,261 @@ no rollback information available
 <h2 id="sec-9"><span class="section-number-2">9</span> multiple headsに関わる操作 </h2>
 <div class="outline-text-2" id="text-9">
 
-
+<p>multiple headsとは名前無しブランチが複数ある状態の事である。
+</p>
 </div>
 
 <div id="outline-container-9.1" class="outline-3">
-<h3 id="sec-9.1"><span class="section-number-3">9.1</span> multiple headsを作る </h3>
+<h3 id="sec-9.1"><span class="section-number-3">9.1</span> multiple headsを作る(hg update [REV] &amp; hg commit) </h3>
 <div class="outline-text-3" id="text-9.1">
+
+
+
+
+<pre class="example">% hg log --template "{rev}:{node}: {desc}\n"
+2:c0266fae871b5783d4f4a50faf0694d41df01418: add perl sample
+1:f491ca2a61140034ed906d7d45893838493246c8: camelize
+0:c0d1b673238bd257f79a7c2779f1e0d8e24d3524: add hello.rb
+%
+% # 一つ前に戻る
+% hg update 1
+0 files updated, 0 files merged, 1 files removed, 0 files unresolved
+% hg parents --template "{rev}:{node}\n"
+1:f491ca2a61140034ed906d7d45893838493246c8
+%
+% # 二つ目のheadsを作る
+% echo 'print "Hello, Mercurial."' &gt; hello.py
+% hg add hello.py
+% hg commit -m "add python sample"
+created new head
+%
+</pre>
+
+
 
 </div>
 
 </div>
 
 <div id="outline-container-9.2" class="outline-3">
-<h3 id="sec-9.2"><span class="section-number-3">9.2</span> multiple headsの確認 </h3>
+<h3 id="sec-9.2"><span class="section-number-3">9.2</span> multiple headsの確認(hg heads) </h3>
 <div class="outline-text-3" id="text-9.2">
+
+
+
+
+<pre class="example">% hg heads
+changeset:   3:980f8866917a
+tag:         tip
+parent:      1:f491ca2a6114
+user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+date:        Mon Mar 07 00:10:18 2011 +0900
+summary:     add python sample
+
+changeset:   2:46f0166b17d8
+user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+date:        Sun Mar 06 22:53:57 2011 +0900
+summary:     add perl sample
+
+%
+</pre>
+
+
 
 </div>
 
 </div>
 
 <div id="outline-container-9.3" class="outline-3">
-<h3 id="sec-9.3"><span class="section-number-3">9.3</span> multiple headsの統合 </h3>
+<h3 id="sec-9.3"><span class="section-number-3">9.3</span> 2つのmultiple headsの統合(hg merge) </h3>
 <div class="outline-text-3" id="text-9.3">
 
+
+
+
+<pre class="example">% hg merge
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+% hg status
+M hello.pl
+%
+% # この状態でparentsを確認すると二つあることがわかる。
+% hg parents --template "{rev}:{node}\n"
+3:980f8866917a1098d08f1e1b85dc396fecbc83ad
+2:46f0166b17d886637c30e6f486b23043be56b22e
+%
+% hg commit -m "merge changeset: 2:46f0166b17d8"
+% hg heads
+changeset:   4:4b83e608a7d0
+tag:         tip
+parent:      3:980f8866917a
+parent:      2:46f0166b17d8
+user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+date:        Mon Mar 07 00:17:50 2011 +0900
+summary:     merge changeset: 2:46f0166b17d8
+
+% ls
+hello.pl  hello.py  hello.rb
+%
+</pre>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-9.4" class="outline-3">
+<h3 id="sec-9.4"><span class="section-number-3">9.4</span> 3つのmultiple headsの統合(hg merge -r [REV]) </h3>
+<div class="outline-text-3" id="text-9.4">
+
+
+</div>
+
+<div id="outline-container-9.4.1" class="outline-4">
+<h4 id="sec-9.4.1"><span class="section-number-4">9.4.1</span> 3つheadの作成 </h4>
+<div class="outline-text-4" id="text-9.4.1">
+
+
+
+
+<pre class="example">% # 二つ目のheadを作る
+% hg update 3
+0 files updated, 0 files merged, 1 files removed, 0 files unresolved
+% echo '(display "Hello, Mercurial.")(newline)' &gt; hello.scm
+% hg add hello.scm
+% hg commit -m "add scheme sample"
+created new head
+%
+% # 三つ目のheadを作る
+% hg update 3
+0 files updated, 0 files merged, 1 files removed, 0 files unresolved
+% echo '(princ (format nil "Hello, Mercurial.~%"))' &gt; hello.cl
+% hg add hello.cl
+% hg commit -m "add common lisp sample"
+created new head
+% 
+% hg heads
+changeset:   6:6a0eac3064c9
+tag:         tip
+parent:      3:980f8866917a
+user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+date:        Mon Mar 07 00:34:33 2011 +0900
+summary:     add common lisp sample
+
+changeset:   5:bcb5dec879f9
+parent:      3:980f8866917a
+user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+date:        Mon Mar 07 00:22:44 2011 +0900
+summary:     add scheme sample
+
+changeset:   4:4b83e608a7d0
+parent:      3:980f8866917a
+parent:      2:46f0166b17d8
+user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+date:        Mon Mar 07 00:17:50 2011 +0900
+summary:     merge changeset: 2:46f0166b17d8
+
+%
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-9.4.2" class="outline-4">
+<h4 id="sec-9.4.2"><span class="section-number-4">9.4.2</span> 統合 </h4>
+<div class="outline-text-4" id="text-9.4.2">
+
+<p>単純なmergeは失敗する
+</p>
+
+
+<pre class="example">% hg merge
+abort: branch 'default' has 3 heads - please merge with an explicit rev
+(run 'hg heads .' to see heads)
+</pre>
+
+
+
+<p>
+リビジョンを指定してmergeを行う
+</p>
+
+
+<pre class="example">% hg parents --template "{rev}:{node}\n"
+6:6a0eac3064c9543384538a5f3ce8e28ad21f5db1
+%
+% # 一つ目のmerge
+% hg merge -r 4
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+%
+% # いっぺんに複数のマージは行えない
+% hg merge -r 5
+abort: outstanding uncommitted merges
+%
+% # 一つ目をコミット
+% hg commit -m "Merged changes"
+%
+% # 二つ目のmergeとコミット
+% hg merge -r 5
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+% hg commit -m "Merged changes"
+%
+% # headの統合が完了
+% hg heads
+changeset:   8:48d139b4230f
+tag:         tip
+parent:      7:89f3c6e6d974
+parent:      5:bcb5dec879f9
+user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+date:        Mon Mar 07 00:47:37 2011 +0900
+summary:     Merged changes
+
+%
+</pre>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-9.5" class="outline-3">
+<h3 id="sec-9.5"><span class="section-number-3">9.5</span> 衝突の解決(hg resolve) </h3>
+<div class="outline-text-3" id="text-9.5">
+
+
+</div>
+
+<div id="outline-container-9.5.1" class="outline-4">
+<h4 id="sec-9.5.1"><span class="section-number-4">9.5.1</span> 衝突するシュチュエーション </h4>
+<div class="outline-text-4" id="text-9.5.1">
+
+</div>
+
+</div>
+
+<div id="outline-container-9.5.2" class="outline-4">
+<h4 id="sec-9.5.2"><span class="section-number-4">9.5.2</span> 衝突の発生 </h4>
+<div class="outline-text-4" id="text-9.5.2">
+
+</div>
+
+</div>
+
+<div id="outline-container-9.5.3" class="outline-4">
+<h4 id="sec-9.5.3"><span class="section-number-4">9.5.3</span> 衝突の解決 </h4>
+<div class="outline-text-4" id="text-9.5.3">
+
+</div>
 </div>
 </div>
 
@@ -901,7 +1140,7 @@ no rollback information available
 <a href="mailto:takumi@timedia.co.jp">&lt;takumi@timedia.co.jp&gt;</a>
 <a href="mailto:trot.thunder@gmail.com">&lt;trot.thunder@gmail.com&gt;</a>
 </p>
-<p class="date"> Date: 2011-03-06 23:06:06 </p>
+<p class="date"> Date: 2011-03-07 00:54:01 </p>
 <p class="creator">HTML generated by org-mode 6.33x in emacs 23</p>
 </div>
 </div>
