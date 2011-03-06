@@ -1,0 +1,307 @@
+#+TITLE: Mercurial チートシート
+#+AUTHOR: Takumi IINO (troter)
+#+EMAIL: takumi@timedia.co.jp, trot.thunder@gmail.com
+#+LANGUAGE: ja
+
+#+OPTIONS: ^:nil toc:2
+#+STYLE: <link rel="stylesheet" type="text/css" href="org-mode-document.css" />
+
+* はじめに
+mercurialのチートシートがgithubに上がっていることに疑問を覚えないこと。
+
+* Mercurialとは
+TODO:
+
+* 最初の設定
+** 設定ファイルの場所
+| Windows                     | Linux/MacOSX/Cygwin |
+|-----------------------------+---------------------|
+| %USERPROFILE%\Mercurial.ini | $HOME/.hgrc         |
+
+** ユーザ名の設定
+設定ファイルに次の項目を追加します。
+#+BEGIN_SRC text
+[ui]
+username=Takumi IINO <takumi@timedia.co.jp>
+#+END_SRC
+
+* help
+** help(hg help)
+#+BEGIN_SRC sh
+% hg help
+#+END_SRC
+** サブコマンドのhelp(hg help [SUB_COMMAND])
+#+BEGIN_SRC sh
+% hg help [SUB_COMMAND]
+#+END_SRC
+#+BEGIN_SRC sh
+% hg help help           # helpのhelpを表示
+#+END_SRC
+** グローバルオプションを表示
+hgのオプションに-vを追加する
+#+BEGIN_SRC sh
+% hg -v help log
+#+END_SRC
+
+* リポジトリを用意する
+** リポジトリの新規作成(hg init)
+#+BEGIN_SRC sh
+% mkdir hello
+% cd hello
+% hg init
+#+END_SRC
+
+** リポジトリのクローン(hg clone)
+#+BEGIN_SRC sh
+% hg clone http://selenic.com/hg mercurial-repo
+requesting all changes
+adding changesets
+adding manifests
+adding file changes
+added 13537 changesets with 26617 changes to 1971 files
+updating to branch default
+872 files updated, 0 files merged, 0 files removed, 0 files unresolved
+$
+#+END_SRC
+
+* 確認を行うコマンド
+
+** コミットログを確認する(hg log)
+#+BEGIN_SRC sh
+% hg log       # 全てのログを表示
+% hg log -l 10 # 最新10個のログを表示
+% hg log -l 10 --branch default # ブランチを指定してログを表示
+#+END_SRC
+
+** サマリー(hg summary)
+#+BEGIN_SRC sh
+% hg summary
+parent: 13536:fac040b7e822 tip
+ merge: drop resolve state for mergers with identical contents (issue2680)
+branch: default
+commit: (clean)
+update: (current)
+%
+#+END_SRC
+
+** 現在のリビジョン(hg parents)
+#+BEGIN_SRC sh
+% hg parents
+changeset:   13536:fac040b7e822
+tag:         tip
+user:        Matt Mackall <mpm@selenic.com>
+date:        Sat Mar 05 16:34:59 2011 -0600
+summary:     merge: drop resolve state for mergers with identical contents (issue2680)
+
+%
+#+END_SRC
+
+** 最新のリビジョン(hg tip)
+#+BEGIN_SRC sh
+% hg tip
+changeset:   13536:fac040b7e822
+tag:         tip
+user:        Matt Mackall <mpm@selenic.com>
+date:        Sat Mar 05 16:34:59 2011 -0600
+summary:     merge: drop resolve state for mergers with identical contents (issue2680)
+
+%
+#+END_SRC
+
+** 現在のブランチ(hg branch)
+#+BEGIN_SRC sh
+% hg branch
+default
+%
+#+END_SRC
+
+** ブランチの一覧とブランチ毎の最新のリビジョン(hg branches)
+#+BEGIN_SRC sh
+% hg branches
+default                    13536:fac040b7e822
+stable                     13534:4ec34de8bbb1 (inactive)
+%
+#+END_SRC
+
+* 移動を行うコマンド
+** 指定したリビジョンに移動(hg update [REV])
+#+BEGIN_SRC sh
+% hg update [リビジョン]
+#+END_SRC
+#+BEGIN_SRC sh
+% hg parent --template "{rev}\n"
+13536
+% hg update 13524 # リビジョン 13520に移動
+10 files updated, 0 files merged, 0 files removed, 0 files unresolved
+% hg parent --template "{rev}\n"
+13524
+%
+#+END_SRC
+
+** 最新のリビジョンに移動(hg update)
+#+BEGIN_SRC sh
+% hg update
+#+END_SRC
+#+BEGIN_SRC sh
+% hg parent --template "{rev}\n"
+13524
+% hg update # 最新のリビジョンに移動
+10 files updated, 0 files merged, 0 files removed, 0 files unresolved
+% hg parent --template "{rev}\n"
+13536
+%
+#+END_SRC
+
+** ブランチの移動(hg update [BRANCH])
+#+BEGIN_SRC sh
+% hg update [ブランチ名]
+#+END_SRC
+#+BEGIN_SRC sh
+% hg branch
+default
+% hg update stable
+22 files updated, 0 files merged, 0 files removed, 0 files unresolved
+% hg branch
+stable
+#+END_SRC
+
+* ファイルの操作
+操作のための新しいリポジトリを作りましょう
+#+BEGIN_SRC sh
+% mkdir hello-repo
+% cd hello-repo
+% hg init
+#+END_SRC
+
+** ファイルを追加する(hg add)
+#+BEGIN_SRC sh
+% echo 'puts "Hello, mercurial."' > hello.rb
+% hg add hello.rb
+%
+#+END_SRC
+
+** コミットする(hg commit)
+#+BEGIN_SRC sh
+% hg tip
+changeset:   -1:000000000000
+tag:         tip
+user:
+date:        Thu Jan 01 00:00:00 1970 +0000
+
+% hg commit -m "add hello.rb"
+% hg tip
+changeset:   0:c0d1b673238b
+tag:         tip
+user:        Takumi IINO <takumi@timedia.co.jp>
+date:        Sun Mar 06 22:27:01 2011 +0900
+summary:     add hello.rb
+
+%
+#+END_SRC
+
+** 変更を確認する(hg diff)
+#+BEGIN_SRC sh
+% sed -i -e s/m/M/ hello.rb
+% hg diff
+diff -r c0d1b673238b hello.rb
+--- a/hello.rb  Sun Mar 06 22:27:01 2011 +0900
++++ b/hello.rb  Sun Mar 06 22:34:35 2011 +0900
+@@ -1,1 +1,1 @@
+p-puts "Hello, mercurial."
++puts "Hello, Mercurial."
+% echo 'print "Hello, Mercurial.\n";' > hello.pl
+% hg add hello.pl
+% hg diff
+diff -r c0d1b673238b hello.pl
+--- /dev/null   Thu Jan 01 00:00:00 1970 +0000
++++ b/hello.pl  Sun Mar 06 22:36:56 2011 +0900
+@@ -0,0 +1,1 @@
++print "Hello, Mercurial.\n";
+%
+#+END_SRC
+
+** 変更されたファイル一覧(hg status)
+#+BEGIN_SRC sh
+% hg status
+M hello.rb
+A hello.pl
+%
+#+END_SRC
+
+** 変更を取り消す(hg revert)
+#+BEGIN_SRC sh
+% hg revert hello.pl
+% hg status
+M hello.rb
+? hello.pl
+%
+% hg add hello.pl # またaddしておこう
+#+END_SRC
+
+** コミットを取り消す(hg rollback)
+#+BEGIN_SRC sh
+% hg commit -m "add perl sample" # 二つの変更をコミットしてしまった
+% hg diff -c 1
+diff -r c0d1b673238b -r 30b4e1e501a3 hello.pl
+--- /dev/null   Thu Jan 01 00:00:00 1970 +0000
++++ b/hello.pl  Sun Mar 06 22:42:41 2011 +0900
+@@ -0,0 +1,1 @@
++print "Hello, Mercurial.\n";
+diff -r c0d1b673238b -r 30b4e1e501a3 hello.rb
+--- a/hello.rb  Sun Mar 06 22:27:01 2011 +0900
++++ b/hello.rb  Sun Mar 06 22:42:41 2011 +0900
+@@ -1,1 +1,1 @@
+-puts "Hello, mercurial."
++puts "Hello, Mercurial."
+%
+% hg rollback
+repository tip rolled back to revision 0 (undo commit)
+working directory now based on revision 0
+%
+% hg commit -m "camelize" hello.rb
+% hg commit -m "add perl sample"
+%
+#+END_SRC
+最新のコミットのみrollback可能
+#+BEGIN_SRC sh
+% hg log --template "{rev}:{node}: {desc}\n"
+2:c0266fae871b5783d4f4a50faf0694d41df01418: add perl sample
+1:f491ca2a61140034ed906d7d45893838493246c8: camelize
+0:c0d1b673238bd257f79a7c2779f1e0d8e24d3524: add hello.rb
+%
+% hg rollback
+repository tip rolled back to revision 1 (undo commit)
+working directory now based on revision 1
+%
+% hg rollback
+no rollback information available
+%
+% hg log --template "{rev}:{node}: {desc}\n"
+1:f491ca2a61140034ed906d7d45893838493246c8: camelize
+0:c0d1b673238bd257f79a7c2779f1e0d8e24d3524: add hello.rb
+% hg commit -m "add perl sample"
+#+END_SRC
+
+* multiple headsに関わる操作
+** multiple headsを作る
+** multiple headsの確認
+** multiple headsの統合
+* ブランチの操作
+** ブランチの作成
+** 別のブランチの変更の取り込み
+** ブランチを閉じる
+* タグをつける
+* リモートブランチの操作
+
+* 用語
+| 用語            | 意味                                     |
+|-----------------+------------------------------------------|
+| tip             | 最新のリビジョンの事                     |
+| defaultブランチ | svnのtrunk、gitのmasterの事              |
+| multiple heads  | 名前無しブランチが複数できている状態の事 |
+
+* 参考文献
+- [[http://mercurial.selenic.com/wiki/JapaneseBeginnersGuides][初心者向けガイド]]
+- [[http://foozy.bitbucket.org/hgbook-ja/index.ja.html][hgbook 日本語版]]
+- [[http://beproud.bitbucket.org/bpmercurial-workflow/ja/][BPMERCURIAL-WORKFLOW ドキュメント]]
+- [[http://www.geocities.jp/km_pp1/org-mode/org-mode-document.html][Org-mode による HTML 文書作成入門]]

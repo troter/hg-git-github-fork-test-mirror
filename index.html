@@ -1,0 +1,783 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+lang="ja" xml:lang="ja">
+<head>
+<title>Mercurial チートシート</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2011-03-06 22:51:03 "/>
+<meta name="author" content="Takumi IINO (troter)"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="org-mode-document.css" />
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+
+<h1 class="title">Mercurial チートシート</h1>
+
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 はじめに </a></li>
+<li><a href="#sec-2">2 Mercurialとは </a></li>
+<li><a href="#sec-3">3 最初の設定 </a>
+<ul>
+<li><a href="#sec-3.1">3.1 設定ファイルの場所 </a></li>
+<li><a href="#sec-3.2">3.2 ユーザ名の設定 </a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4 help </a>
+<ul>
+<li><a href="#sec-4.1">4.1 hgのhelp </a></li>
+<li><a href="#sec-4.2">4.2 サブコマンドのhelp </a></li>
+<li><a href="#sec-4.3">4.3 グローバルオプションを表示 </a></li>
+</ul>
+</li>
+<li><a href="#sec-5">5 リポジトリを用意する </a>
+<ul>
+<li><a href="#sec-5.1">5.1 リポジトリの新規作成(hg init) </a></li>
+<li><a href="#sec-5.2">5.2 リポジトリのクローン(hg clone) </a></li>
+</ul>
+</li>
+<li><a href="#sec-6">6 確認を行うコマンド </a>
+<ul>
+<li><a href="#sec-6.1">6.1 コミットログを確認する(hg log) </a></li>
+<li><a href="#sec-6.2">6.2 サマリー(hg summary) </a></li>
+<li><a href="#sec-6.3">6.3 現在のリビジョン(hg parents) </a></li>
+<li><a href="#sec-6.4">6.4 最新のリビジョン(hg tip) </a></li>
+<li><a href="#sec-6.5">6.5 現在のブランチ(hg branch) </a></li>
+<li><a href="#sec-6.6">6.6 ブランチの一覧とブランチ毎の最新のリビジョン(hg branches) </a></li>
+</ul>
+</li>
+<li><a href="#sec-7">7 移動を行うコマンド </a>
+<ul>
+<li><a href="#sec-7.1">7.1 指定したリビジョンに移動(hg update [REV]) </a></li>
+<li><a href="#sec-7.2">7.2 最新のリビジョンに移動(hg update) </a></li>
+<li><a href="#sec-7.3">7.3 ブランチの移動(hg update [BRANCH]) </a></li>
+</ul>
+</li>
+<li><a href="#sec-8">8 ファイルの操作 </a>
+<ul>
+<li><a href="#sec-8.1">8.1 ファイルを追加する(hg add) </a></li>
+<li><a href="#sec-8.2">8.2 コミットする(hg commit) </a></li>
+<li><a href="#sec-8.3">8.3 変更を確認する(hg diff) </a></li>
+<li><a href="#sec-8.4">8.4 変更されたファイル一覧(hg status) </a></li>
+<li><a href="#sec-8.5">8.5 コミットを取り消す(hg rollback) </a></li>
+</ul>
+</li>
+<li><a href="#sec-9">9 用語 </a></li>
+<li><a href="#sec-10">10 その他読むべき文献 </a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> はじめに </h2>
+<div class="outline-text-2" id="text-1">
+
+<p>mercurialのチートシートがgithubに上がっていることに疑問を覚えないこと。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Mercurialとは </h2>
+<div class="outline-text-2" id="text-2">
+
+<p>TODO:
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 最初の設定 </h2>
+<div class="outline-text-2" id="text-3">
+
+
+</div>
+
+<div id="outline-container-3.1" class="outline-3">
+<h3 id="sec-3.1"><span class="section-number-3">3.1</span> 設定ファイルの場所 </h3>
+<div class="outline-text-3" id="text-3.1">
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col align="left" /><col align="left" />
+</colgroup>
+<thead>
+<tr><th scope="col">Windows</th><th scope="col">Linux/MacOSX/Cygwin</th></tr>
+</thead>
+<tbody>
+<tr><td>%USERPROFILE%\Mercurial.ini</td><td>$HOME/.hgrc</td></tr>
+</tbody>
+</table>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3.2" class="outline-3">
+<h3 id="sec-3.2"><span class="section-number-3">3.2</span> ユーザ名の設定 </h3>
+<div class="outline-text-3" id="text-3.2">
+
+<p>設定ファイルに次の項目を追加します。
+</p>
+
+
+<pre class="example">[ui]
+username=Takumi IINO &lt;takumi@timedia.co.jp&gt;
+</pre>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> help </h2>
+<div class="outline-text-2" id="text-4">
+
+
+</div>
+
+<div id="outline-container-4.1" class="outline-3">
+<h3 id="sec-4.1"><span class="section-number-3">4.1</span> hgのhelp </h3>
+<div class="outline-text-3" id="text-4.1">
+
+
+
+
+<pre class="example">% hg help
+</pre>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4.2" class="outline-3">
+<h3 id="sec-4.2"><span class="section-number-3">4.2</span> サブコマンドのhelp </h3>
+<div class="outline-text-3" id="text-4.2">
+
+
+
+
+<pre class="example">% hg help &lt;sub command&gt; 
+% hg help help           # helpのhelpを表示
+</pre>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4.3" class="outline-3">
+<h3 id="sec-4.3"><span class="section-number-3">4.3</span> グローバルオプションを表示 </h3>
+<div class="outline-text-3" id="text-4.3">
+
+<p>hgのオプションに-vを追加する
+</p>
+
+
+<pre class="example">% hg -v help log
+</pre>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> リポジトリを用意する </h2>
+<div class="outline-text-2" id="text-5">
+
+
+</div>
+
+<div id="outline-container-5.1" class="outline-3">
+<h3 id="sec-5.1"><span class="section-number-3">5.1</span> リポジトリの新規作成(hg init) </h3>
+<div class="outline-text-3" id="text-5.1">
+
+
+
+
+<pre class="example">% mkdir hello
+% cd hello
+% hg init
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-5.2" class="outline-3">
+<h3 id="sec-5.2"><span class="section-number-3">5.2</span> リポジトリのクローン(hg clone) </h3>
+<div class="outline-text-3" id="text-5.2">
+
+
+
+
+<pre class="example">% hg clone http://selenic.com/hg mercurial-repo
+requesting all changes
+adding changesets
+adding manifests
+adding file changes
+added 13537 changesets with 26617 changes to 1971 files
+updating to branch default
+872 files updated, 0 files merged, 0 files removed, 0 files unresolved
+$
+</pre>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> 確認を行うコマンド </h2>
+<div class="outline-text-2" id="text-6">
+
+
+
+</div>
+
+<div id="outline-container-6.1" class="outline-3">
+<h3 id="sec-6.1"><span class="section-number-3">6.1</span> コミットログを確認する(hg log) </h3>
+<div class="outline-text-3" id="text-6.1">
+
+
+
+
+<pre class="example">% hg log       # 全てのログを表示
+% hg log -l 10 # 最新10個のログを表示
+% hg log -l 10 --branch default # ブランチを指定してログを表示
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-6.2" class="outline-3">
+<h3 id="sec-6.2"><span class="section-number-3">6.2</span> サマリー(hg summary) </h3>
+<div class="outline-text-3" id="text-6.2">
+
+
+
+
+<pre class="example">% hg summary
+parent: 13536:fac040b7e822 tip
+ merge: drop resolve state for mergers with identical contents (issue2680)
+branch: default
+commit: (clean)
+update: (current)
+%
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-6.3" class="outline-3">
+<h3 id="sec-6.3"><span class="section-number-3">6.3</span> 現在のリビジョン(hg parents) </h3>
+<div class="outline-text-3" id="text-6.3">
+
+
+
+
+<pre class="example">% hg parents
+changeset:   13536:fac040b7e822
+tag:         tip
+user:        Matt Mackall &lt;mpm@selenic.com&gt;
+date:        Sat Mar 05 16:34:59 2011 -0600
+summary:     merge: drop resolve state for mergers with identical contents (issue2680)
+
+%
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-6.4" class="outline-3">
+<h3 id="sec-6.4"><span class="section-number-3">6.4</span> 最新のリビジョン(hg tip) </h3>
+<div class="outline-text-3" id="text-6.4">
+
+
+
+
+<pre class="example">% hg tip
+changeset:   13536:fac040b7e822
+tag:         tip
+user:        Matt Mackall &lt;mpm@selenic.com&gt;
+date:        Sat Mar 05 16:34:59 2011 -0600
+summary:     merge: drop resolve state for mergers with identical contents (issue2680)
+
+%
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-6.5" class="outline-3">
+<h3 id="sec-6.5"><span class="section-number-3">6.5</span> 現在のブランチ(hg branch) </h3>
+<div class="outline-text-3" id="text-6.5">
+
+
+
+
+<pre class="example">% hg branch
+default
+%
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-6.6" class="outline-3">
+<h3 id="sec-6.6"><span class="section-number-3">6.6</span> ブランチの一覧とブランチ毎の最新のリビジョン(hg branches) </h3>
+<div class="outline-text-3" id="text-6.6">
+
+
+
+
+<pre class="example">% hg branches
+default                    13536:fac040b7e822
+stable                     13534:4ec34de8bbb1 (inactive)
+%
+</pre>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> 移動を行うコマンド </h2>
+<div class="outline-text-2" id="text-7">
+
+
+</div>
+
+<div id="outline-container-7.1" class="outline-3">
+<h3 id="sec-7.1"><span class="section-number-3">7.1</span> 指定したリビジョンに移動(hg update [REV]) </h3>
+<div class="outline-text-3" id="text-7.1">
+
+
+
+
+<pre class="example">% hg update [リビジョン]
+</pre>
+
+
+
+
+<pre class="example">% hg parent --template "{rev}\n"
+13536
+% hg update 13524 # リビジョン 13520に移動
+10 files updated, 0 files merged, 0 files removed, 0 files unresolved
+% hg parent --template "{rev}\n"
+13524
+%
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7.2" class="outline-3">
+<h3 id="sec-7.2"><span class="section-number-3">7.2</span> 最新のリビジョンに移動(hg update) </h3>
+<div class="outline-text-3" id="text-7.2">
+
+
+
+
+<pre class="example">% hg update
+</pre>
+
+
+
+
+<pre class="example">% hg parent --template "{rev}\n"
+13524
+% hg update # 最新のリビジョンに移動
+10 files updated, 0 files merged, 0 files removed, 0 files unresolved
+% hg parent --template "{rev}\n"
+13536
+%
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7.3" class="outline-3">
+<h3 id="sec-7.3"><span class="section-number-3">7.3</span> ブランチの移動(hg update [BRANCH]) </h3>
+<div class="outline-text-3" id="text-7.3">
+
+
+
+
+<pre class="example">% hg update [ブランチ名]
+</pre>
+
+
+
+
+<pre class="example">% hg branch
+default
+% hg update stable
+22 files updated, 0 files merged, 0 files removed, 0 files unresolved
+% hg branch
+stable
+</pre>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> ファイルの操作 </h2>
+<div class="outline-text-2" id="text-8">
+
+<p>操作のための新しいリポジトリを作りましょう
+</p>
+
+
+<pre class="example">% mkdir hello-repo
+% cd hello-repo
+% hg init
+</pre>
+
+
+
+
+
+</div>
+
+<div id="outline-container-8.1" class="outline-3">
+<h3 id="sec-8.1"><span class="section-number-3">8.1</span> ファイルを追加する(hg add) </h3>
+<div class="outline-text-3" id="text-8.1">
+
+
+
+
+<pre class="example">% echo 'puts "Hello, mercurial."' &gt; hello.rb
+% hg add hello.rb
+%
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-8.2" class="outline-3">
+<h3 id="sec-8.2"><span class="section-number-3">8.2</span> コミットする(hg commit) </h3>
+<div class="outline-text-3" id="text-8.2">
+
+
+
+
+<pre class="example">% hg tip
+changeset:   -1:000000000000
+tag:         tip
+user:
+date:        Thu Jan 01 00:00:00 1970 +0000
+
+% hg commit -m "add hello.rb"
+% hg tip
+changeset:   0:c0d1b673238b
+tag:         tip
+user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+date:        Sun Mar 06 22:27:01 2011 +0900
+summary:     add hello.rb
+
+%
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-8.3" class="outline-3">
+<h3 id="sec-8.3"><span class="section-number-3">8.3</span> 変更を確認する(hg diff) </h3>
+<div class="outline-text-3" id="text-8.3">
+
+
+
+
+<pre class="example">% sed -i -e s/m/M/ hello.rb
+% hg diff
+diff -r c0d1b673238b hello.rb
+--- a/hello.rb  Sun Mar 06 22:27:01 2011 +0900
++++ b/hello.rb  Sun Mar 06 22:34:35 2011 +0900
+@@ -1,1 +1,1 @@
+p-puts "Hello, mercurial."
++puts "Hello, Mercurial."
+% echo 'print "Hello, Mercurial.\n";' &gt; hello.pl
+% hg add hello.pl
+% hg diff
+diff -r c0d1b673238b hello.pl
+--- /dev/null   Thu Jan 01 00:00:00 1970 +0000
++++ b/hello.pl  Sun Mar 06 22:36:56 2011 +0900
+@@ -0,0 +1,1 @@
++print "Hello, Mercurial.\n";
+%
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-8.4" class="outline-3">
+<h3 id="sec-8.4"><span class="section-number-3">8.4</span> 変更されたファイル一覧(hg status) </h3>
+<div class="outline-text-3" id="text-8.4">
+
+
+
+
+<pre class="example">% hg status
+M hello.rb
+A hello.pl
+%
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-8.5" class="outline-3">
+<h3 id="sec-8.5"><span class="section-number-3">8.5</span> コミットを取り消す(hg rollback) </h3>
+<div class="outline-text-3" id="text-8.5">
+
+
+
+
+<pre class="example">% hg commit -m "add perl sample" # 二つの変更をコミットしてしまった
+% hg diff -c 1
+diff -r c0d1b673238b -r 30b4e1e501a3 hello.pl
+--- /dev/null   Thu Jan 01 00:00:00 1970 +0000
++++ b/hello.pl  Sun Mar 06 22:42:41 2011 +0900
+@@ -0,0 +1,1 @@
++print "Hello, Mercurial.\n";
+diff -r c0d1b673238b -r 30b4e1e501a3 hello.rb
+--- a/hello.rb  Sun Mar 06 22:27:01 2011 +0900
++++ b/hello.rb  Sun Mar 06 22:42:41 2011 +0900
+@@ -1,1 +1,1 @@
+-puts "Hello, mercurial."
++puts "Hello, Mercurial."
+%
+% hg rollback
+repository tip rolled back to revision 0 (undo commit)
+working directory now based on revision 0
+%
+% hg commit -m "camelize" hello.rb
+% hg commit -m "add perl sample"
+%
+</pre>
+
+
+
+<p>
+最新のコミットのみrollback可能
+</p>
+
+
+<pre class="example">% hg log --template "{rev}:{node}: {desc}\n"
+2:c0266fae871b5783d4f4a50faf0694d41df01418: add perl sample
+1:f491ca2a61140034ed906d7d45893838493246c8: camelize
+0:c0d1b673238bd257f79a7c2779f1e0d8e24d3524: add hello.rb
+%
+% hg rollback
+repository tip rolled back to revision 1 (undo commit)
+working directory now based on revision 1
+%
+% hg rollback
+no rollback information available
+%
+% hg log --template "{rev}:{node}: {desc}\n"
+1:f491ca2a61140034ed906d7d45893838493246c8: camelize
+0:c0d1b673238bd257f79a7c2779f1e0d8e24d3524: add hello.rb
+% hg commit -m "add perl sample"
+</pre>
+
+
+
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> 用語 </h2>
+<div class="outline-text-2" id="text-9">
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col align="left" /><col align="left" />
+</colgroup>
+<thead>
+<tr><th scope="col">用語</th><th scope="col">意味</th></tr>
+</thead>
+<tbody>
+<tr><td>tip</td><td>最新のリビジョンの事</td></tr>
+<tr><td>defaultブランチ</td><td>svnのtrunk、gitのmasterの事</td></tr>
+</tbody>
+</table>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-10" class="outline-2">
+<h2 id="sec-10"><span class="section-number-2">10</span> その他読むべき文献 </h2>
+<div class="outline-text-2" id="text-10">
+
+<ul>
+<li>
+<a href="http://mercurial.selenic.com/wiki/JapaneseBeginnersGuides">初心者向けガイド</a>
+</li>
+<li>
+<a href="http://foozy.bitbucket.org/hgbook-ja/index.ja.html">hgbook 日本語版</a>
+</li>
+<li>
+<a href="http://beproud.bitbucket.org/bpmercurial-workflow/ja/">BPMERCURIAL-WORKFLOW ドキュメント</a>
+</li>
+</ul>
+</div>
+</div>
+<div id="postamble">
+<p class="author"> Author: Takumi IINO (troter)
+<a href="mailto:takumi@timedia.co.jp">&lt;takumi@timedia.co.jp&gt;</a>
+<a href="mailto:trot.thunder@gmail.com">&lt;trot.thunder@gmail.com&gt;</a>
+</p>
+<p class="date"> Date: 2011-03-06 22:51:03 </p>
+<p class="creator">HTML generated by org-mode 6.33x in emacs 23</p>
+</div>
+</div>
+</body>
+</html>
