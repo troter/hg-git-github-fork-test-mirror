@@ -25,7 +25,7 @@ TODO:
 username=Takumi IINO <takumi@timedia.co.jp>
 #+END_SRC
 
-* help
+* helpの参照
 ** help(hg help)
 #+BEGIN_SRC sh
 % hg help
@@ -64,7 +64,7 @@ updating to branch default
 $
 #+END_SRC
 
-* 確認を行うコマンド
+* 確認を行う
 ** コミットログを確認する(hg log)
 #+BEGIN_SRC sh
 % hg log       # 全てのログを表示
@@ -122,7 +122,7 @@ stable                     13534:4ec34de8bbb1 (inactive)
 %
 #+END_SRC
 
-* 移動を行うコマンド
+* 移動を行う
 ** 指定したリビジョンに移動(hg update [REV])
 #+BEGIN_SRC sh
 % hg update [リビジョン]
