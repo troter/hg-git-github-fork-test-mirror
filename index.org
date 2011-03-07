@@ -452,11 +452,9 @@ summary:     Merged changes
 * タグの操作
 ** タグをつける(hg tag)
 * 用語
-| 用語            | 意味                                     |
-|-----------------+------------------------------------------|
-| tip             | 最新のリビジョンの事                     |
-| defaultブランチ | svnのtrunk、gitのmasterの事              |
-| multiple heads  | 名前無しブランチが複数できている状態の事 |
+- tip :: 最新のリビジョンの事
+- defaultブランチ :: svnのtrunk、gitのmasterの事
+- multiple heads :: 名前無しブランチが複数できている状態の事
 
 * 参考文献
 - [[http://mercurial.selenic.com/wiki/JapaneseBeginnersGuides][初心者向けガイド]]
