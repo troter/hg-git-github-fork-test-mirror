@@ -541,13 +541,20 @@ makefile_fix
 % hg branches
 default                       11:1597cc35cade
 %
+% # hg summaryでブランチの次のコミットの確認
+% hg summary
+parent: 11:1597cc35cade tip
+ guileがelispを置き換えるなら考える
+branch: makefile_fix
+commit: 1 unknown (new branch)
+update: (current)
+%
 % hg commit -m "start makefile_fix branch"
 % hg branches
 makefile_fix                  12:7293a6112d50
 default                       11:1597cc35cade (inactive)
 %
 #+END_SRC
-*** TODO チェンジセットの属性を確認する方法。ブランチをコミット前に確認したい。
 ** "別のブランチ"の変更の取り込み(hg merge)
 ** "別のリポジトリの同じブランチ"の変更の取り込み(hg pull -U)
 ** "別のリポジトリの同じブランチ"へ変更の送信(hg push)
