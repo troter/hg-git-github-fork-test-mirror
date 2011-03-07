@@ -562,5 +562,6 @@ default                       11:1597cc35cade (inactive)
 * 参考文献
 - [[http://mercurial.selenic.com/wiki/JapaneseBeginnersGuides][初心者向けガイド]]
 - [[http://foozy.bitbucket.org/hgbook-ja/index.ja.html][hgbook 日本語版]]
+- [[http://ja.hgtip.com/][hgtip]]
 - [[http://beproud.bitbucket.org/bpmercurial-workflow/ja/][BPMERCURIAL-WORKFLOW ドキュメント]]
 - [[http://www.geocities.jp/km_pp1/org-mode/org-mode-document.html][Org-mode による HTML 文書作成入門]]
