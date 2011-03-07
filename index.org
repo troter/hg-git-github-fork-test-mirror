@@ -531,6 +531,23 @@ summary:     guileがelispを置き換えるなら考える
 #+END_SRC
 * ブランチの操作
 ** ブランチの作成(hg branch [NAME])
+#+BEGIN_SRC sh
+% hg branch makefile_fix
+marked working directory as branch makefile_fix
+% hg branch
+makefile_fix
+%
+% # コミット前はブランチ一覧には登場しない
+% hg branches
+default                       11:1597cc35cade
+%
+% hg commit -m "start makefile_fix branch"
+% hg branches
+makefile_fix                  12:7293a6112d50
+default                       11:1597cc35cade (inactive)
+%
+#+END_SRC
+*** TODO チェンジセットの属性を確認する方法。ブランチをコミット前に確認したい。
 ** "別のブランチ"の変更の取り込み(hg merge)
 ** "別のリポジトリの同じブランチ"の変更の取り込み(hg pull -U)
 ** "別のリポジトリの同じブランチ"へ変更の送信(hg push)
