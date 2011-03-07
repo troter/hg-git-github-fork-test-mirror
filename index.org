@@ -556,6 +556,42 @@ default                       11:1597cc35cade (inactive)
 %
 #+END_SRC
 ** "別のブランチ"の変更の取り込み(hg merge)
+*** makefile_fixブランチに変更を加える
+#+BEGIN_SRC sh
+% hg update makefile_fix
+% vi Makefile
+% hg diff    # 今気づいたんだけれど、hg resolveを安易に叩いたのが原因で衝突の解決のところマージミスってた
+diff -r 7293a6112d50 Makefile
+--- a/Makefile  Mon Mar 07 23:00:46 2011 +0900
++++ b/Makefile  Tue Mar 08 00:11:23 2011 +0900
+@@ -1,9 +1,5 @@
+ all: scm
+
+ scm:
+-<<<<<<< local
+-       guile hello.scm
+-=======
+        gosh hello.scm
+->>>>>>> other
+
+% hg commit -m "fix ... orz"
+%
+% vi Makefile
+% hg diff
+diff -r 84d4c7bf2648 Makefile
+--- a/Makefile  Tue Mar 08 00:11:47 2011 +0900
++++ b/Makefile  Tue Mar 08 00:16:29 2011 +0900
+@@ -3,3 +3,6 @@
+ scm:
+        gosh hello.scm
+
++rb:
++       ruby hello.rb
++
+% hg commit -m "run ruby"
+#+END_SRC
+*** ブランチに含まれていない変更を確認する
+*** makefile_fixの変更をdefaultブランチに取り込む
 ** "別のリポジトリの同じブランチ"の変更の取り込み(hg pull -U)
 ** "別のリポジトリの同じブランチ"へ変更の送信(hg push)
 ** ブランチを閉じる(hg commit --close-branch)
