@@ -208,9 +208,11 @@ diff -r c0d1b673238b hello.rb
 @@ -1,1 +1,1 @@
 -puts "Hello, mercurial."
 +puts "Hello, Mercurial."
+%
+% # もう一つ追加してみる
 % echo 'print "Hello, Mercurial.\n";' > hello.pl
 % hg add hello.pl
-% hg diff
+% hg diff hello.pl
 diff -r c0d1b673238b hello.pl
 --- /dev/null   Thu Jan 01 00:00:00 1970 +0000
 +++ b/hello.pl  Sun Mar 06 22:36:56 2011 +0900
