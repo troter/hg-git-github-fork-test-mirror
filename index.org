@@ -130,7 +130,7 @@ stable                     13534:4ec34de8bbb1 (inactive)
 #+BEGIN_SRC sh
 % hg parent --template "{rev}\n"
 13536
-% hg update 13524 # リビジョン 13520に移動
+% hg update 13524 # リビジョン 13524に移動
 10 files updated, 0 files merged, 0 files removed, 0 files unresolved
 % hg parent --template "{rev}\n"
 13524
@@ -206,7 +206,7 @@ diff -r c0d1b673238b hello.rb
 --- a/hello.rb  Sun Mar 06 22:27:01 2011 +0900
 +++ b/hello.rb  Sun Mar 06 22:34:35 2011 +0900
 @@ -1,1 +1,1 @@
-p-puts "Hello, mercurial."
+-puts "Hello, mercurial."
 +puts "Hello, Mercurial."
 % echo 'print "Hello, Mercurial.\n";' > hello.pl
 % hg add hello.pl
