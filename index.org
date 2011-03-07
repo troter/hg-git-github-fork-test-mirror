@@ -443,8 +443,88 @@ summary:     Merged changes
 
 ** 衝突の解決(hg resolve)
 *** 衝突するシュチュエーション
+二つのheadで別々の修正を行う
+#+BEGIN_SRC sh
+% hg parents --template "{rev}:{node}\n"
+8:48d139b4230f7db36105b605d5f85e01a1b0efb0
+%
+% echo "all: scm\n\nscm:\n\tgosh hello.scm\n" > Makefile
+% hg add Makefile
+% hg ci -m "run with gosh"
+%
+% hg update 8
+% echo "all: scm\n\nscm:\n\tguile hello.scm\n" > Makefile
+% hg add Makefile
+% hg ci -m "run with guile"
+%
+% hg heads --template "{rev}:{node} {desc}\n"
+10:47589976d454f75dc26bd8f99a786fac408e8b14 run with guile
+9:821a2430ed2f5607bb5da42ee6ffb77d7a88fa55 run with gosh
+%
+#+END_SRC
 *** 衝突の発生
+#+BEGIN_SRC sh
+% hg merge
+merging Makefile
+warning: conflicts during merge.
+merging Makefile failed!
+0 files updated, 0 files merged, 0 files removed, 1 files unresolved
+use 'hg resolve' to retry unresolved file merges or 'hg update -C .' to abandon
+%
+% hg status
+M Makefile        # svnのように C ではない
+? Makefile.orig
+%
+% cat Makefile
+all: scm
+
+scm:
+<<<<<<< local
+        guile hello.scm
+=======
+        gosh hello.scm
+>>>>>>> other
+
+% hg commit -m "解決しないとコミットできない"
+abort: unresolved merge conflicts (see hg resolve)
+%
+#+END_SRC
 *** 衝突の解決
+#+BEGIN_SRC sh
+% # 衝突したファイル一覧
+% hg resolve -l
+U Makefile
+% vi Makefile
+% hg diff Makefile
+diff -r 47589976d454 Makefile
+--- a/Makefile  Mon Mar 07 21:13:58 2011 +0900
++++ b/Makefile  Mon Mar 07 21:42:16 2011 +0900
+@@ -1,5 +1,5 @@
+ all: scm
+
+ scm:
+-       guile hello.scm
++       gosh hello.scm
+
+%
+% # 解決済みのマークをつける
+% hg resolve -m Makefile
+% hg resolve -l
+R Makefile
+%
+% # コミット
+% hg commit -m "guileがelispを置き換えるなら考える"
+% hg heads
+changeset:   11:1597cc35cade
+tag:         tip
+parent:      10:47589976d454
+parent:      9:821a2430ed2f
+user:        Takumi IINO <takumi@timedia.co.jp>
+date:        Mon Mar 07 21:52:53 2011 +0900
+summary:     guileがelispを置き換えるなら考える
+
+%
+#+END_SRC
 * ブランチの操作
 ** ブランチの作成(hg branch [NAME])
 ** "別のブランチ"の変更の取り込み(hg merge)
