@@ -471,9 +471,16 @@ merging Makefile failed!
 0 files updated, 0 files merged, 0 files removed, 1 files unresolved
 use 'hg resolve' to retry unresolved file merges or 'hg update -C .' to abandon
 %
+#+END_SRC
+コンフリクト時の状態を詳しく見てみる
+#+BEGIN_SRC sh
 % hg status
 M Makefile        # svnのように C ではない
 ? Makefile.orig
+%
+% # 衝突したファイル一覧
+% hg resolve -l
+U Makefile
 %
 % cat Makefile
 all: scm
@@ -491,9 +498,6 @@ abort: unresolved merge conflicts (see hg resolve)
 #+END_SRC
 *** 衝突の解決
 #+BEGIN_SRC sh
-% # 衝突したファイル一覧
-% hg resolve -l
-U Makefile
 % vi Makefile
 % hg diff Makefile
 diff -r 47589976d454 Makefile
