@@ -7,7 +7,7 @@ lang="ja" xml:lang="ja">
 <title>Mercurial チートシート</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2011-03-20 22:01:53 "/>
+<meta name="generated" content="2011-03-20 23:19:58 "/>
 <meta name="author" content="Takumi IINO (troter)"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -141,17 +141,23 @@ lang="ja" xml:lang="ja">
 <li><a href="#sec-10.1">10.1 ブランチの作成(hg branch [NAME]) </a></li>
 <li><a href="#sec-10.2">10.2 "別のブランチ"の変更の取り込み(hg merge) </a></li>
 <li><a href="#sec-10.3">10.3 ブランチを閉じる(hg commit &ndash;close-branch) </a></li>
-<li><a href="#sec-10.4">10.4 "別のリポジトリの同じブランチ"の変更の取り込み(hg pull -U) </a></li>
-<li><a href="#sec-10.5">10.5 "別のリポジトリの同じブランチ"へ変更の送信(hg push) </a></li>
 </ul>
 </li>
-<li><a href="#sec-11">11 タグの操作 </a>
+<li><a href="#sec-11">11 リポジトリ間の操作 </a>
 <ul>
-<li><a href="#sec-11.1">11.1 タグをつける(hg tag) </a></li>
+<li><a href="#sec-11.1">11.1 "別のリポジトリの同じブランチ"の変更の取り込み(hg pull) </a></li>
+<li><a href="#sec-11.2">11.2 すでに変更を加えていた場合の"別のリポジトリの同じブランチ"の変更の取り込み(hg pull) </a></li>
+<li><a href="#sec-11.3">11.3 "別のリポジトリの同じブランチ"へ変更の送信(hg push) </a></li>
 </ul>
 </li>
-<li><a href="#sec-12">12 用語 </a></li>
-<li><a href="#sec-13">13 参考文献 </a></li>
+<li><a href="#sec-12">12 タグの操作 </a>
+<ul>
+<li><a href="#sec-12.1">12.1 タグをつける(hg tag) </a></li>
+</ul>
+</li>
+<li><a href="#sec-13">13 用語 </a></li>
+<li><a href="#sec-14">14 ファイルの操作、multiple headsに関わる操作、ブランチの操作、リポジトリ間の操作、タグの操作 の履歴 </a></li>
+<li><a href="#sec-15">15 参考文献 </a></li>
 </ul>
 </div>
 </div>
@@ -1313,26 +1319,11 @@ default                       15:4e0ddd138f6b
 % hg branches --closed
 default                       15:4e0ddd138f6b
 makefile_fix                  16:f976730a0346 (closed)
-% 
+% hg up default
+0 files updated, 0 files merged, 0 files removed, 0 files unresolved
+%
 </pre>
 
-
-
-</div>
-
-</div>
-
-<div id="outline-container-10.4" class="outline-3">
-<h3 id="sec-10.4"><span class="section-number-3">10.4</span> "別のリポジトリの同じブランチ"の変更の取り込み(hg pull -U) </h3>
-<div class="outline-text-3" id="text-10.4">
-
-</div>
-
-</div>
-
-<div id="outline-container-10.5" class="outline-3">
-<h3 id="sec-10.5"><span class="section-number-3">10.5</span> "別のリポジトリの同じブランチ"へ変更の送信(hg push) </h3>
-<div class="outline-text-3" id="text-10.5">
 
 
 </div>
@@ -1341,24 +1332,350 @@ makefile_fix                  16:f976730a0346 (closed)
 </div>
 
 <div id="outline-container-11" class="outline-2">
-<h2 id="sec-11"><span class="section-number-2">11</span> タグの操作 </h2>
+<h2 id="sec-11"><span class="section-number-2">11</span> リポジトリ間の操作 </h2>
 <div class="outline-text-2" id="text-11">
+
+<p>まずリポジトリをクローンする
+</p>
+
+
+<pre class="example">% hg clone hello-repo hello-repo-haskell
+updating to branch default
+6 files updated, 0 files merged, 0 files removed, 0 files unresolved
+</pre>
+
+
 
 
 </div>
 
 <div id="outline-container-11.1" class="outline-3">
-<h3 id="sec-11.1"><span class="section-number-3">11.1</span> タグをつける(hg tag) </h3>
+<h3 id="sec-11.1"><span class="section-number-3">11.1</span> "別のリポジトリの同じブランチ"の変更の取り込み(hg pull) </h3>
 <div class="outline-text-3" id="text-11.1">
 
+
+</div>
+
+<div id="outline-container-11.1.1" class="outline-4">
+<h4 id="sec-11.1.1"><span class="section-number-4">11.1.1</span> 元リポジトリに変更を加える </h4>
+<div class="outline-text-4" id="text-11.1.1">
+
+
+
+
+<pre class="example">% cd hello-repo
+% vi Makefile
+% hg di Makefile
+diff -r f976730a0346 Makefile
+--- a/Makefile  Sun Mar 20 22:00:08 2011 +0900
++++ b/Makefile  Sun Mar 20 22:26:50 2011 +0900
+@@ -6,3 +6,6 @@
+ rb:
+        ruby hello.rb
+
++py:
++       python hello.py
++
+% hg ci -m "run python"
+</pre>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-11.1.2" class="outline-4">
+<h4 id="sec-11.1.2"><span class="section-number-4">11.1.2</span> 変更を取り込む </h4>
+<div class="outline-text-4" id="text-11.1.2">
+
+
+
+
+<pre class="example">% cd ../hello-repo-haskell
+% hg pull
+pulling from /home/takumi/sandbox/hello-repo
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files
+(run 'hg update' to get a working copy)
+% hg update
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+%
+</pre>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-11.2" class="outline-3">
+<h3 id="sec-11.2"><span class="section-number-3">11.2</span> すでに変更を加えていた場合の"別のリポジトリの同じブランチ"の変更の取り込み(hg pull) </h3>
+<div class="outline-text-3" id="text-11.2">
+
+
+</div>
+
+<div id="outline-container-11.2.1" class="outline-4">
+<h4 id="sec-11.2.1"><span class="section-number-4">11.2.1</span> 再度hello-repoに変更を加える </h4>
+<div class="outline-text-4" id="text-11.2.1">
+
+
+
+
+<pre class="example">% cd ../hello-repo
+% vi Makefile
+% hg diff Makefile
+diff -r 7cd901509845 Makefile
+--- a/Makefile  Sun Mar 20 22:29:22 2011 +0900
++++ b/Makefile  Sun Mar 20 22:39:33 2011 +0900
+@@ -9,3 +9,6 @@
+ py:
+        python hello.py
+
++pl:
++       perl hello.pl
++
+% hg ci -m "run perl"
+%
+</pre>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-11.2.2" class="outline-4">
+<h4 id="sec-11.2.2"><span class="section-number-4">11.2.2</span> hello-repo-haskellに変更を加える </h4>
+<div class="outline-text-4" id="text-11.2.2">
+
+
+
+
+<pre class="example">% cd ../hello-repo-haskell
+% echo 'main :: IO()\nmain = putStrLn "Hello, Mercurial."' &gt; hello.hs
+% hg add hello.hs
+% hg ci -m "add haskell sample"
+%
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-11.2.3" class="outline-4">
+<h4 id="sec-11.2.3"><span class="section-number-4">11.2.3</span> hello-repoの変更を取り込む </h4>
+<div class="outline-text-4" id="text-11.2.3">
+
+
+
+
+<pre class="example">% hg pull
+pulling from /home/takumi/sandbox/hello-repo
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 1 changesets with 1 changes to 1 files (+1 heads)
+(run 'hg heads' to see heads, 'hg merge' to merge)
+%
+% hg heads --template "{rev}:{node} {desc|firstline}\n"
+19:e706d4fd6805afef5118761f33e2e5605da97a8a run perl
+18:ad81adf49b423cc6d2e262d89c7e72c3781e04d5 add haskell sample
+%
+% hg parents --template "{rev}:{node}\n"
+18:ad81adf49b423cc6d2e262d89c7e72c3781e04d5
+%
+</pre>
+
+
+
+<p>
+新しいheadsができた。mercurialでは複数人で協調する場合に常に常にmultipleheadsを意識する必要がある。というわけでマージする。<sup><a class="footref" name="fnr.1" href="#fn.1">1</a></sup>
+</p>
+
+
+<pre class="example">% hg merge
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+% hg ci -m "merged"
+% hg heads
+changeset:   20:768d84182c71
+tag:         tip
+parent:      18:ad81adf49b42
+parent:      19:e706d4fd6805
+user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+date:        Sun Mar 20 22:51:00 2011 +0900
+summary:     merged
+
+%
+</pre>
+
+
+
+<p>
+headsがひとつになったことが確認できる。<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup>
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-11.3" class="outline-3">
+<h3 id="sec-11.3"><span class="section-number-3">11.3</span> "別のリポジトリの同じブランチ"へ変更の送信(hg push) </h3>
+<div class="outline-text-3" id="text-11.3">
+
+
+</div>
+
+<div id="outline-container-11.3.1" class="outline-4">
+<h4 id="sec-11.3.1"><span class="section-number-4">11.3.1</span> headsが一つの場合 </h4>
+<div class="outline-text-4" id="text-11.3.1">
+
+
+
+
+<pre class="example">% pwd
+/home/takumi/sandbox/hello-repo-haskell
+% hg push
+pushing to /home/takumi/sandbox/hello-repo
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 2 changesets with 1 changes to 1 files
+%
+</pre>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-11.3.2" class="outline-4">
+<h4 id="sec-11.3.2"><span class="section-number-4">11.3.2</span> headsが二つの場合 </h4>
+<div class="outline-text-4" id="text-11.3.2">
+
+
+
+
+<pre class="example">% hg parents --template "{rev}:{node}\n"
+20:768d84182c71aee58e321cc2c152a0c8484d7cc5
+% hg up 19
+% vi Makefile
+n% hg di
+diff -r e706d4fd6805 Makefile
+--- a/Makefile  Sun Mar 20 22:39:57 2011 +0900
++++ b/Makefile  Sun Mar 20 23:06:08 2011 +0900
+@@ -12,3 +12,6 @@
+ pl:
+        perl hello.pl
+
++hs:
++       hugs hello.hs
++
+% hg ci -m "run hugs"
+created new head
+%
+% hg push
+pushing to /home/takumi/sandbox/hello-repo
+searching for changes
+abort: push creates new remote heads on branch 'default'!
+(did you forget to merge? use push -f to force)
+</pre>
+
+
+
+<p>
+通常、別のリポジトリにmultipleheadsを強要する事は不適切である（ブランチを作成するべき）。諦めてmergeする。
+</p>
+
+
+<pre class="example">% hg merge
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+% hg ci -m "merged"
+% hg push
+pushing to /home/takumi/sandbox/hello-repo
+searching for changes
+adding changesets
+adding manifests
+adding file changes
+added 2 changesets with 1 changes to 1 files
+%
+</pre>
+
+
+
+
+</div>
 </div>
 </div>
 
 </div>
 
 <div id="outline-container-12" class="outline-2">
-<h2 id="sec-12"><span class="section-number-2">12</span> 用語 </h2>
+<h2 id="sec-12"><span class="section-number-2">12</span> タグの操作 </h2>
 <div class="outline-text-2" id="text-12">
+
+
+</div>
+
+<div id="outline-container-12.1" class="outline-3">
+<h3 id="sec-12.1"><span class="section-number-3">12.1</span> タグをつける(hg tag) </h3>
+<div class="outline-text-3" id="text-12.1">
+
+
+
+
+<pre class="example">% hg parents --template "{rev}:{node}\n"
+22:650e447b9fb133f3013b61acb2d36145f1c3e6cd
+%
+% hg tag v0.0.1
+% hg log -l 1
+changeset:   23:5d7a5fdc0b1a
+tag:         tip
+user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+date:        Sun Mar 20 23:12:38 2011 +0900
+summary:     Added tag v0.0.1 for changeset 650e447b9fb1
+
+% 
+</pre>
+
+
+
+<p>
+よく見ると.hgtagsというファイルが新規作成されている。
+</p>
+
+
+<pre class="example">% ls -a
+./  ../  .hg/  .hgtags  hello.cl  hello.hs  hello.pl  hello.py  hello.rb  hello.scm  Makefile
+% cat .hgtags
+650e447b9fb133f3013b61acb2d36145f1c3e6cd v0.0.1
+%
+</pre>
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-13" class="outline-2">
+<h2 id="sec-13"><span class="section-number-2">13</span> 用語 </h2>
+<div class="outline-text-2" id="text-13">
 
 <dl>
 <dt>tip</dt><dd>
@@ -1376,9 +1693,151 @@ svnのtrunk、gitのmasterの事
 
 </div>
 
-<div id="outline-container-13" class="outline-2">
-<h2 id="sec-13"><span class="section-number-2">13</span> 参考文献 </h2>
-<div class="outline-text-2" id="text-13">
+<div id="outline-container-14" class="outline-2">
+<h2 id="sec-14"><span class="section-number-2">14</span> ファイルの操作、multiple headsに関わる操作、ブランチの操作、リポジトリ間の操作、タグの操作 の履歴 </h2>
+<div class="outline-text-2" id="text-14">
+
+<p><a href="http://mercurial.selenic.com/wiki/GraphlogExtension">GraphlogExtension</a>の結果を貼り付けておく。hash値が異なるのはご愛敬で、、、
+</p>
+
+
+<pre class="example">@  changeset:   23:5d7a5fdc0b1a
+|  tag:         tip
+|  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+|  date:        Sun Mar 20 23:12:38 2011 +0900
+|  summary:     Added tag v0.0.1 for changeset 650e447b9fb1
+o    changeset:   22:650e447b9fb1
+|\   tag:         v0.0.1
+| |  parent:      21:0c9819be6417
+| |  parent:      20:768d84182c71
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Sun Mar 20 23:08:59 2011 +0900
+| |  summary:     merged
+| o  changeset:   21:0c9819be6417
+| |  parent:      19:e706d4fd6805
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Sun Mar 20 23:06:36 2011 +0900
+| |  summary:     run hugs
+o |  changeset:   20:768d84182c71
+|\|  parent:      18:ad81adf49b42
+| |  parent:      19:e706d4fd6805
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Sun Mar 20 22:51:00 2011 +0900
+| |  summary:     merged
+| o  changeset:   19:e706d4fd6805
+| |  parent:      17:7cd901509845
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Sun Mar 20 22:39:57 2011 +0900
+| |  summary:     run perl
+o |  changeset:   18:ad81adf49b42
+|/   user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+|    date:        Sun Mar 20 22:44:19 2011 +0900
+|    summary:     add haskell sample
+o  changeset:   17:7cd901509845
+|  parent:      15:4e0ddd138f6b
+|  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+|  date:        Sun Mar 20 22:29:22 2011 +0900
+|  summary:     run python
+| o  changeset:   16:f976730a0346
+| |  branch:      makefile_fix
+| |  parent:      14:3cb402ea1e44
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Sun Mar 20 22:00:08 2011 +0900
+| |  summary:     finish.
+o |  changeset:   15:4e0ddd138f6b
+|\|  parent:      11:1597cc35cade
+| |  parent:      14:3cb402ea1e44
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Sun Mar 20 21:58:05 2011 +0900
+| |  summary:     merge makefile_fix
+| o  changeset:   14:3cb402ea1e44
+| |  branch:      makefile_fix
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Tue Mar 08 00:16:52 2011 +0900
+| |  summary:     run ruby
+| o  changeset:   13:84d4c7bf2648
+| |  branch:      makefile_fix
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Tue Mar 08 00:11:47 2011 +0900
+| |  summary:     fix ... orz
+| o  changeset:   12:7293a6112d50
+|/   branch:      makefile_fix
+|    user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+|    date:        Mon Mar 07 23:00:46 2011 +0900
+|    summary:     start makefile_fix branch
+o    changeset:   11:1597cc35cade
+|\   parent:      10:47589976d454
+| |  parent:      9:821a2430ed2f
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Mon Mar 07 21:52:53 2011 +0900
+| |  summary:     guileがelispを置き換えるなら考える
+| o  changeset:   10:47589976d454
+| |  parent:      8:48d139b4230f
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Mon Mar 07 21:13:58 2011 +0900
+| |  summary:     run with guile
+o |  changeset:   9:821a2430ed2f
+|/   user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+|    date:        Mon Mar 07 21:12:36 2011 +0900
+|    summary:     run with gosh
+o    changeset:   8:48d139b4230f
+|\   parent:      7:89f3c6e6d974
+| |  parent:      5:bcb5dec879f9
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Mon Mar 07 00:47:37 2011 +0900
+| |  summary:     Merged changes
+| o    changeset:   7:89f3c6e6d974
+| |\   parent:      6:6a0eac3064c9
+| | |  parent:      4:4b83e608a7d0
+| | |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| | |  date:        Mon Mar 07 00:45:07 2011 +0900
+| | |  summary:     Merged changes
+| | o  changeset:   6:6a0eac3064c9
+| | |  parent:      3:980f8866917a
+| | |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| | |  date:        Mon Mar 07 00:34:33 2011 +0900
+| | |  summary:     add common lisp sample
+o---+  changeset:   5:bcb5dec879f9
+  | |  parent:      3:980f8866917a
+ / /   user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |    date:        Mon Mar 07 00:22:44 2011 +0900
+| |    summary:     add scheme sample
+o |  changeset:   4:4b83e608a7d0
+|\|  parent:      3:980f8866917a
+| |  parent:      2:46f0166b17d8
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Mon Mar 07 00:17:50 2011 +0900
+| |  summary:     merge changeset: 2:46f0166b17d8
+| o  changeset:   3:980f8866917a
+| |  parent:      1:f491ca2a6114
+| |  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+| |  date:        Mon Mar 07 00:10:18 2011 +0900
+| |  summary:     add python sample
+o |  changeset:   2:46f0166b17d8
+|/   user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+|    date:        Sun Mar 06 22:53:57 2011 +0900
+|    summary:     add perl sample
+o  changeset:   1:f491ca2a6114
+|  user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+|  date:        Sun Mar 06 22:43:47 2011 +0900
+|  summary:     camelize
+o  changeset:   0:c0d1b673238b
+   user:        Takumi IINO &lt;takumi@timedia.co.jp&gt;
+   date:        Sun Mar 06 22:27:01 2011 +0900
+   summary:     add hello.rb
+</pre>
+
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-15" class="outline-2">
+<h2 id="sec-15"><span class="section-number-2">15</span> 参考文献 </h2>
+<div class="outline-text-2" id="text-15">
 
 <ul>
 <li>
@@ -1395,8 +1854,21 @@ svnのtrunk、gitのmasterの事
 </li>
 <li>
 <a href="http://www.geocities.jp/km_pp1/org-mode/org-mode-document.html">Org-mode による HTML 文書作成入門</a>
+
 </li>
 </ul>
+
+
+
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+<p class="footnote"><sup><a class="footnum" name="fn.1" href="#fnr.1">1</a></sup> 無駄なマージばかり増えていくことに抵抗があれば<a href="http://mercurial.selenic.com/wiki/RebaseExtension">RebaseExtension</a>を調べてみるといい。
+</p>
+<p class="footnote"><sup><a class="footnum" name="fn.2" href="#fnr.2">2</a></sup> pull merge commitの一連の流れを行う<a href="http://mercurial.selenic.com/wiki/FetchExtension">FetchExtension</a>も存在する。
+</p>
 </div>
 </div>
 <div id="postamble">
@@ -1404,7 +1876,7 @@ svnのtrunk、gitのmasterの事
 <a href="mailto:takumi@timedia.co.jp">&lt;takumi@timedia.co.jp&gt;</a>
 <a href="mailto:trot.thunder@gmail.com">&lt;trot.thunder@gmail.com&gt;</a>
 </p>
-<p class="date"> Date: 2011-03-20 22:01:53 </p>
+<p class="date"> Date: 2011-03-20 23:19:58 </p>
 <p class="creator">HTML generated by org-mode 6.33x in emacs 23</p>
 </div>
 </div>
