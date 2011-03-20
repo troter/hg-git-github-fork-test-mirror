@@ -820,6 +820,10 @@ summary:     Added tag v0.0.1 for changeset 650e447b9fb1
 650e447b9fb133f3013b61acb2d36145f1c3e6cd v0.0.1
 %
 #+END_SRC
+
+* 次に読むべき記事
+- [[http://labs.timedia.co.jp/2011/03/mercurial-extensions-we-should-setup-for-gituser.html][Git使いがMercurial使いに転職するとき設定しておくべきMercurial拡張]]
+
 * 用語
 - tip :: 最新のリビジョンの事
 - defaultブランチ :: svnのtrunk、gitのmasterの事
