@@ -590,11 +590,48 @@ diff -r 84d4c7bf2648 Makefile
 +
 % hg commit -m "run ruby"
 #+END_SRC
-*** ブランチに含まれていない変更を確認する
 *** makefile_fixの変更をdefaultブランチに取り込む
+#+BEGIN_SRC sh
+% hg up default
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+#+END_SRC
+makefile_fixの変更をdefaultブランチに取り込む
+#+BEGIN_SRC sh
+% hg merge makefile_fix
+1 files updated, 0 files merged, 0 files removed, 0 files unresolved
+(branch merge, don't forget to commit)
+% hg ci -m "merge makefile_fix"
+% hg log -l 1
+changeset:   15:4e0ddd138f6b
+tag:         tip
+parent:      11:1597cc35cade
+parent:      14:3cb402ea1e44
+user:        Takumi IINO <takumi@timedia.co.jp>
+date:        Sun Mar 20 21:58:05 2011 +0900
+summary:     merge makefile_fix
+
+%
+#+END_SRC
+** ブランチを閉じる(hg commit --close-branch)
+#+BEGIN_SRC sh
+% hg branch
+default
+[takumi@takumi-THINK:~/sandbox/hello-repo.back(2)]
+% hg up makefile_fix
+0 files updated, 0 files merged, 0 files removed, 0 files unresolved
+% hg commit --close-branch -m "finish."
+% hg branch
+makefile_fix
+% hg branches
+default                       15:4e0ddd138f6b
+% hg branches --closed
+default                       15:4e0ddd138f6b
+makefile_fix                  16:f976730a0346 (closed)
+% 
+#+END_SRC
 ** "別のリポジトリの同じブランチ"の変更の取り込み(hg pull -U)
 ** "別のリポジトリの同じブランチ"へ変更の送信(hg push)
-** ブランチを閉じる(hg commit --close-branch)
+
 * タグの操作
 ** タグをつける(hg tag)
 * 用語
