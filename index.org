@@ -5,6 +5,19 @@
 
 #+OPTIONS: ^:nil toc:2
 #+STYLE: <link rel="stylesheet" type="text/css" href="org-mode-document.css" />
+#+HTML:<script type="text/javascript">
+#+HTML:
+#+HTML:  var _gaq = _gaq || [];
+#+HTML:  _gaq.push(['_setAccount', 'UA-22731528-1']);
+#+HTML:  _gaq.push(['_trackPageview']);
+#+HTML:
+#+HTML:  (function() {
+#+HTML:    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+#+HTML:    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+#+HTML:    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+#+HTML:  })();
+#+HTML:
+#+HTML:</script>
 
 * はじめに
 mercurialのチートシートが[[https://github.com/troter/troter.github.com/tree/master/mercurial-cheatsheet][github]]に上がっていることに疑問を覚えないこと。
