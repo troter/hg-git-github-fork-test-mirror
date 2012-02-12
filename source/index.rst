@@ -34,7 +34,7 @@ TODO:
   ::
 
     [ui]
-    username=Takumi IINO <takumi@timedia.co.jp>
+    username = Takumi IINO <takumi@timedia.co.jp>
 
 helpの参照
 ----------
@@ -90,6 +90,11 @@ hgのオプションに-vを追加する
 
 確認を行う
 ----------
+先ほどクローンしたリポジトリの内容を確認する。
+
+  ::
+
+    % cd mercurial-repo
 
 コミットログを確認する(hg log)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
